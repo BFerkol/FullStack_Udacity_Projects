@@ -248,33 +248,32 @@ def edit_artist(artist_id):
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
   # TODO: take values from the form submitted, and update existing
-  # artist record with ID <artist_id> using the new attributes
+  # artist record with ID <artist_id> using the new attributes = DONE
   form = ArtistForm(request.form)
   try:
-      artist = Artist.query.filter_by(id=artist_id).one()
-      artist.name = form.name.data,
-      artist.genres = json.dumps(form.genres.data),  # array json
-      artist.city = form.city.data,
-      artist.state = form.state.data,
-      artist.phone = form.phone.data,
-      artist.facebook_link = form.facebook_link.data,
-      artist.image_link = form.image_link.data,
+    artist = Artist.query.filter_by(id=artist_id).one()
+    artist.name = form.name.data,
+    artist.genres = json.dumps(form.genres.data),  # array json
+    artist.city = form.city.data,
+    artist.state = form.state.data,
+    artist.phone = form.phone.data,
+    artist.facebook_link = form.facebook_link.data,
+    artist.image_link = form.image_link.data,
 
-      db.session.update(artist)
-      db.session.commit()
+    db.session.update(artist)
+    db.session.commit()
 
-      # on successful db insert, flash success
-      flash('Artist ' + request.form['name'] + ' was successfully updated!')
-  except Exception as e:
-      flash('An error occurred. Artist ' +
-        request.form['name'] + ' could not be updated.')
+    # on successful db insert, flash success
+    flash('Artist ' + request.form['name'] + ' was successfully updated!')
+  except Exception as exception:
+    db.session.rollback()
   return redirect(url_for('show_artist', artist_id=artist_id))
   
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
   form = VenueForm()
-  # TODO: populate form with values from venue with ID <venue_id>
+  # TODO: populate form with values from venue with ID <venue_id> = DONE
   venue = Venue.query.get(venue_id)
   form.name.data = venue.name
   form.city.data = venue.city
@@ -288,7 +287,7 @@ def edit_venue(venue_id):
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
-  # venue record with ID <venue_id> using the new attributes
+  # venue record with ID <venue_id> using the new attributes = DONE
   form = VenueForm(request.form)
   try:
     venue = Venue.query.filter_by(id=venue_id).one()
@@ -302,12 +301,11 @@ def edit_venue_submission(venue_id):
 
     db.session.update(venue)
     db.session.commit()
-  
+    # on successful db insert, flash success
     flash('Venue ' + request.form['name'] + ' was successfully updated!')
 
-  except Exception as e:
-      flash('An error occurred. Venue ' +
-        request.form['name'] + ' could not be updated.')
+  except Exception as exception:
+    db.session.rollback()
   return redirect(url_for('show_venue', venue_id=venue_id))
 
 #  Create Artist
