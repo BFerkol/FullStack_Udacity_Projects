@@ -94,15 +94,16 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_add_question_200(self):
+        # Test POST new question
         old_total_questions = len(Question.query.all())
 
-        n_question = {
+        new_question = {
             'question': 'new question',
             'answer' : 'new answer',
             'difficulty': 1, # defaults are 1
             'category': 1}
 
-        res = self.client().post('/question', json=n_question)
+        res = self.client().post('/question', json=new_question)
         data = json.loads(res.data)
         new_total_questions = len(Question.query.all())
 
@@ -111,7 +112,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue((len(new_total_questions) - len(old_total_questions)) == 1)
 
 
-    def test_add_question_error_422(self):
+    def test_add_question_error_400(self):
+        # Test POST new question with difficulty input missing
         old_total_questions = len(Question.query.all())
 
         new_question = {
@@ -130,6 +132,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_delete_question_200(self):
+        # Test DELETE a question
         question = Question(question='test question',
                             answer='test answer',
                             difficulty=1, category=1) # default values set to 1
@@ -148,6 +151,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_delete_non_existing_question_422(self):
+        # Test DELETE a question that is non existent
         res = self.client().delete('/questions/a')
         data = json.loads(res.data)
 
@@ -180,6 +184,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_get_questions_per_category_200(self):
+        # Test GET all questions from first category
         res = self.client().get('/categories/1/questions')
         data = json.loads(res.data)
 
