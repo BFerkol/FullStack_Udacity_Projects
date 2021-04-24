@@ -92,12 +92,12 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue((len(new_total_questions) - len(old_total_questions)) == 1)
 
-    def test_add_question_no_difficulty_422(self):
+    def test_add_question_error_422(self):
         old_total_questions = len(Question.query.all())
 
         new_question = {
-            'question': 'new_question',
-            'answer': 'new_answer',
+            'question': 'Test Question?',
+            'answer': 'Yes',
             'category': 1}
 
         res = self.client().post('/questions', json=new_question)
