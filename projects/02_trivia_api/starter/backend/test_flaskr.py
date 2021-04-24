@@ -33,6 +33,15 @@ class TriviaTestCase(unittest.TestCase):
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
+    def test_endpoint_not_available(self):
+        res = self.client().get('/question')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['error'], 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found, endpoint not available')
+
     def test_get_categories_200(self):
         res = self.client().get('/categories')
         data = json.loads(res.data)
@@ -57,15 +66,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_questions'])
         self.assertTrue(len(data['questions']))
-        self.assertTrue(len(data['categories']))
 
-    def test_get_questions_beyond_range_404(self):
+    def test_get_questions_past_valid_range_404(self):
         res = self.client().get('/questions?page=1000')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'resource not found')
+        self.assertEqual(data['message'], 'resource not found, out of range')
 
     def test_add_question_200(self):
         old_total_questions = len(Question.query.all())
@@ -73,9 +81,8 @@ class TriviaTestCase(unittest.TestCase):
         n_question = {
             'question': 'new question',
             'answer' : 'new answer',
-            'difficulty': 1, # default is 1
-            'category': 1 # default is 1
-        }
+            'difficulty': 1, # defaults are 1
+            'category': 1}
 
         res = self.client().post('/question', json=n_question)
         data = json.loads(res.data)
@@ -83,23 +90,28 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(new_total_questions, (old_total_questions + 1))
+        self.assertTrue((len(new_total_questions) - len(old_total_questions)) == 1)
 
     def test_add_question_no_difficulty_422(self):
+        old_total_questions = len(Question.query.all())
+
         new_question = {
             'question': 'new_question',
             'answer': 'new_answer',
-            'category': 1
-        }
+            'category': 1}
+
         res = self.client().post('/questions', json=new_question)
         data = json.loads(res.data)
+        new_total_questions = len(Question.query.all())
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "unprocessable, missing difficulty input")
+        self.assertTrue(len(new_total_questions) == len(old_total_questions))
 
     def test_delete_question_200(self):
-        question = Question(question='test question', answer='test answer',
+        question = Question(question='test question',
+                            answer='test answer',
                             difficulty=1, category=1) # default values set to 1
         question.insert()
         question_id = question.id
@@ -160,8 +172,9 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["message"], "resource not found")
 
     def test_play_quiz_200(self):
-        new_quiz_round = {'previous_questions': [],
-                          'quiz_category': {'type': 'Entertainment', 'id': 5}}
+        new_quiz_round = {
+            'previous_questions': [],
+            'quiz_category': {'type': 'Entertainment', 'id': 5}}
 
         res = self.client().post('/quizzes', json=new_quiz_round)
         data = json.loads(res.data)
