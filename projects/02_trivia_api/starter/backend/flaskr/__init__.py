@@ -28,14 +28,10 @@ def create_app(test_config=None):
       return response
 
   def paginate_questions(request, selection):
-    # Get page from request. If not given, default to 1
     page = request.args.get('page', 1, type=int)
-    
-    # Define start and end
-    start =  (page - 1) * QUESTIONS_PER_PAGE
-    end = start + QUESTIONS_PER_PAGE
+    start = QUESTIONS_PER_PAGE * (page - 1)
+    end = QUESTIONS_PER_PAGE + start
 
-    # Format selection
     questions = [question.format() for question in selection]
     current_questions = questions[start:end]
 
@@ -66,26 +62,21 @@ def create_app(test_config=None):
   number of total questions, current category, categories. 
   '''
   @app.route('/questions', methods=['GET'])
-  def get_questions_for_page():
-    all_questions = Question.query.order_by(Question.id).all()
-    questions_paginated = paginate_questions(request, all_questions)
-    if len(questions_paginated) == 0:
+  def retrieve_questions():
+    selection = Question.query.order_by(Question.id).all()
+    current_questions = paginate_questions(request, selection)
+
+    categories = Category.query.order_by(Category.type).all()
+
+    if len(current_questions) == 0:
       abort(404)
-    
-    categories = Category.query.all()
-    categories_all = [category.format() for category in categories]
-    
-    # Initialize empty map to be filled & returned
-    categories_returned = {}
-    for cat in categories_all:
-      categories_returned[cat['id']] = cat['type']
+
     return jsonify({
       'success': True,
-      'questions': questions_paginated,
-      'total_questions': len(all_questions),
-      'categories' : categories_returned,
-      'current_category' : None
-      })
+      'questions': current_questions,
+      'total_questions': len(selection),
+      'categories': {category.id: category.type for category in categories},
+      'current_category': None})
 
   '''
   @TODO: 
