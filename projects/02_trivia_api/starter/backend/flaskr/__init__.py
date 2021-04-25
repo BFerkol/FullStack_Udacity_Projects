@@ -144,6 +144,7 @@ def create_app(test_config=None):
         'questions': [question.format() for question in search_results],
         'total_questions': len(search_results),
         'current_category': None})
+
     abort(404)
 
   '''
@@ -184,6 +185,20 @@ def create_app(test_config=None):
       'current_category' : category_id
       })
 
+  @app.route('/categories/<int:category_id>/questions', methods=['GET'])
+  def retrieve_questions_by_category(category_id):
+    try:
+      questions = Question.query.filter(Question.category == str(category_id)).all()
+
+      return jsonify({
+        'success': True,
+        'questions': [question.format() for question in questions],
+        'total_questions': len(questions),
+        'current_category': category_id})
+
+    except:
+      abort(404)
+
   '''
   @TODO: 
   Create a POST endpoint to get questions to play the quiz. 
@@ -193,46 +208,31 @@ def create_app(test_config=None):
   '''
   @app.route('/quizzes', methods=['POST'])
   def play_quiz():
-    body = request.get_json()
-
-    if not body:
-      # If no JSON Body was given, raise error.
-      abort(400, {'message': 'Please provide a JSON body with previous question Ids and optional category.'})
-    
-    # Get paramters from JSON Body.
-    previous_questions = body.get('previous_questions', None)
-    current_category = body.get('quiz_category', None)
-
-    if not previous_questions:
-      if current_category and current_category['id']!=0:
-        # if no list with previous questions is given, but a category , just gut any question from this category.
-        questions_raw = (Question.query
-          .filter(Question.category == str(current_category['id']))
-          .all())
+    try:
+      body = request.get_json()
+      
+      if not ('quiz_category' in body and 'previous_questions' in body):
+        abort(422)
+        
+      category = body.get('quiz_category')
+      previous_questions = body.get('previous_questions')
+      
+      if category['type'] == 'click':
+        available_questions = Question.query.filter(
+                  Question.id.notin_((previous_questions))).all()
       else:
-        # if no list with previous questions is given and also no category , just gut any question.
-        questions_raw = (Question.query.all())    
-    else:
-      if current_category and current_category['id']!=0:
-      # if a list with previous questions is given and also a category, query for questions which are not contained in previous question and are in given category
-        questions_raw = (Question.query
-          .filter(Question.category == str(current_category['id']))
-          .filter(Question.id.notin_(previous_questions))
-          .all())
-      else:
-        # # if a list with previous questions is given but no category, query for questions which are not contained in previous question.
-        questions_raw = (Question.query
-          .filter(Question.id.notin_(previous_questions))
-          .all())
-    
-    # Format questions & get a random question
-    questions_formatted = [question.format() for question in questions_raw]
-    random_question = questions_formatted[random.randint(0, len(questions_formatted)-1)]
-    
-    return jsonify({
+         available_questions = Question.query.filter_by(
+                  category=category['id']).filter(Question.id.notin_((previous_questions))).all()
+
+      new_question = available_questions[random.randrange(
+                  0, len(available_questions))].format() if len(available_questions) > 0 else None
+
+      return jsonify({
         'success': True,
-        'question': random_question
-      })
+        'question': new_question})
+
+    except:
+      abort(422)
 
   '''
   @TODO: 
@@ -242,42 +242,37 @@ def create_app(test_config=None):
   @app.errorhandler(400)
   def bad_request(error):
     return jsonify({
-      "success": False, 
+      "success": False,
       "error": 400,
-      "message": getErrorMessage(error, "bad request")
-      }), 400
+      "message": "bad request"}), 400
 
   @app.errorhandler(404)
-  def ressource_not_found(error):
+  def not_found(error):
     return jsonify({
-      "success": False, 
+      "success": False,
       "error": 404,
-      "message": getErrorMessage(error, "resource not found")
-      }), 404
+      "message": "resource not found"}), 404
 
   @app.errorhandler(405)
   def method_not_allowed(error):
     return jsonify({
       "success": False, 
       "error": 405,
-      "message": "method not allowed"
-      }), 405
+      "message": "method not allowed"}), 405
 
   @app.errorhandler(422)
   def unprocessable(error):
     return jsonify({
-      "success": False, 
+      "success": False,
       "error": 422,
-      "message": getErrorMessage(error, "unprocessable")
-      }), 422
+      "message": "unprocessable"}), 422
   
   @app.errorhandler(500)
   def internal_server_error(error):
     return jsonify({
       "success": False, 
       "error": 500,
-      "message": "internal server error"
-      }), 500
+      "message": "internal server error"}), 500
 
   def getErrorMessage(error, default_text):
     try:
