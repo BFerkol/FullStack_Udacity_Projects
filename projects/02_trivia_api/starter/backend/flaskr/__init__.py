@@ -87,16 +87,15 @@ def create_app(test_config=None):
   '''
   @app.route('/questions/<int:question_id>', methods=['DELETE'])
   def delete_question_by_id(question_id):
-    question = Question.query.filter(Question.id == question_id).one_or_none()
-    if not question:
-      abort(404)
-    
     try:
+      question = Question.query.get(question_id)
       question.delete()
+
       return jsonify({
         'success' : True,
         'deleted' : question_id
       })
+
     except:
       abort(422)
 
@@ -106,75 +105,23 @@ def create_app(test_config=None):
   which will require the question and answer text, 
   category, and difficulty score.
   '''
-  @app.route('/questions', methods=['POST'])
-  def create_or_search_questions():
+  @app.route("/questions", methods=['POST'])
+  def add_question():
     body = request.get_json()
 
-    # If request does not contain valid JSON, raise 400.
-    if not body:
-      abort(400)
-    search_term = body.get('searchTerm', None)
-    if search_term:
-      # If json body contains a search term, execute question search
-      questions = Question.query.filter(Question.question.contains(search_term)).all()
-
-      # If no question could be found, return 404
-      if not questions:
-        abort(404)
-    
-      # If questions have been found, format result and return succesfull response
-      questions_found = [question.format() for question in questions]
-      selections = Question.query.order_by(Question.id).all() # needed for total_questions
-      
-
-      return jsonify({
-        'success': True,
-        'questions': questions_found,
-        'total_questions': len(selections),
-        'current_category' : None
-      })
-
-    # Get field informations from request body
-    new_question = body.get('question', None)
-    new_answer = body.get('answer', None)
-    new_category = body.get('category', None)
-    new_difficulty = body.get('difficulty', None)
-
-    # Make sure that all requiered fields are given.
-    # Otherwise, respond with error message that describes what is missing
-    if not new_question:
-      abort(400, {'message': 'Question is a mandatory field'})
-
-    if not new_answer:
-      abort(400, {'message': 'Answer is a mandatory field'})
-
-    if not new_category:
-      abort(400, {'message': 'Category is a mandatory field'})
-
-    if not new_difficulty:
-      abort(400, {'message': 'Difficulty is a mandatory field'})
+    if not ('question' in body and 'answer' in body and 'difficulty' in body and 'category' in body):
+      abort(422)
 
     try:
-      # Try to insert a new question. If anything went wrong, raise 422 "unprocessable"
-      question = Question(
-        question = new_question, 
-        answer = new_answer, 
-        category= new_category,
-        difficulty = new_difficulty
-        )
+      question = Question(question=body.get('question'),
+                          answer=body.get('answer'),
+                          difficulty=body.get('difficulty'),
+                          category=body.get('category'))
       question.insert()
 
-      # After succesfully insertion, get all paginated questions 
-      selections = Question.query.order_by(Question.id).all()
-      questions_paginated = paginate_questions(request, selections)
-
-      # Return succesfull response
       return jsonify({
         'success': True,
-        'created': question.id,
-        'questions': questions_paginated,
-        'total_questions': len(selections)
-      })
+        'created': question.id})
 
     except:
       abort(422)
