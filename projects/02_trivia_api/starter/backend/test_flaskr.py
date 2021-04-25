@@ -34,6 +34,7 @@ class TriviaTestCase(unittest.TestCase):
     Write at least one test for each test for successful operation and for expected errors.
     """
     def test_endpoint_not_available(self):
+        # Test GET request for the endpoint
         res = self.client().get('/question')
         data = json.loads(res.data)
 
@@ -44,7 +45,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_get_categories_200(self):
-        # Test GET all categories
+        # Test GET request for all categories
         res = self.client().get('/categories')
         data = json.loads(res.data)
 
@@ -54,7 +55,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_get_non_existing_category_404(self):
-        # Test GET categories out of the scope
+        # Test GET request for a non-existent category
         res = self.client().get('/categories/999')
         data = json.loads(res.data)
 
@@ -64,7 +65,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_get_categories_method_error_405(self):
-        # Test GET wrong method to get all categories 
+        # Test GET request for wrong method to get all categories 
         res = self.client().patch('/categories')
         data = json.loads(res.data)
 
@@ -75,6 +76,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_get_paginated_questions_200(self):
+        # Test GET request for all questions
         res = self.client().get('/questions')
         data = json.loads(res.data)
 
@@ -85,6 +87,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_get_questions_past_valid_range_404(self):
+        # Test GET request for questions out of range
         res = self.client().get('/questions?page=1000')
         data = json.loads(res.data)
 
@@ -94,7 +97,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_add_question_200(self):
-        # Test POST new question
+        # Test POST request for adding a new question
         old_total_questions = len(Question.query.all())
 
         new_question = {
@@ -196,6 +199,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_get_questions_per_category_404(self):
+        # Test GET all questions from specified category
         res = self.client().get('/categories/a/questions')
         data = json.loads(res.data)
 
@@ -205,6 +209,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_play_quiz_200(self):
+        # Test POST to play a new quiz
         new_quiz_round = {
             'previous_questions': [],
             'quiz_category': {'type': 'Entertainment', 'id': 5}}
@@ -217,11 +222,12 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_play_quiz_404(self):
+        # Test POST to play a new quiz while missing data
         new_quiz_round = {'previous_questions': []}
         res = self.client().post('/quizzes', json=new_quiz_round)
         data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 422)
+        self.assertEqual(res.status_code, 404)
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "unprocessable")
 

@@ -23,9 +23,9 @@ def create_app(test_config=None):
   '''
   @app.after_request
   def after_request(response):
-      response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
-      response.headers.add('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE,OPTIONS')
-      return response
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE,OPTIONS')
+    return response
 
   def paginate_questions(request, selection):
     page = request.args.get('page', 1, type=int)
