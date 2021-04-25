@@ -156,36 +156,6 @@ def create_app(test_config=None):
   category to be shown. 
   '''
   @app.route('/categories/<int:category_id>/questions', methods=['GET'])
-  def get_questions_from_categories(category_id):
-    # Query with category id for every question
-    if category_id!=0:
-      selection = (Question.query
-      .filter(Question.category == category_id)
-      .order_by(Question.id)
-      .all())
-    else:
-      selection = (Question.query.order_by(Question.id).all())
-
-    # If no questions in the category
-    if not selection:
-      abort(400)
-
-    # Paginate
-    questions_paginated = paginate_questions(request, selection)
-
-    # If paginated questions is empty it means the page selected does not contain any questions
-    if not questions_paginated:
-      abort(404, {'message': 'No questions in selected page.'})
-
-    # Return succesfull response
-    return jsonify({
-      'success': True,
-      'questions': questions_paginated,
-      'total_questions': len(selection),
-      'current_category' : category_id
-      })
-
-  @app.route('/categories/<int:category_id>/questions', methods=['GET'])
   def retrieve_questions_by_category(category_id):
     try:
       questions = Question.query.filter(Question.category == str(category_id)).all()
