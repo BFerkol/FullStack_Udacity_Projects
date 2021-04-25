@@ -31,11 +31,11 @@ def create_app(test_config=None):
     # Get page from request. If not given, default to 1
     page = request.args.get('page', 1, type=int)
     
-    # Calculate start and end slicing
+    # Define start and end
     start =  (page - 1) * QUESTIONS_PER_PAGE
     end = start + QUESTIONS_PER_PAGE
 
-    # Format selection into list of dicts and slice
+    # Format selection
     questions = [question.format() for question in selection]
     current_questions = questions[start:end]
 
@@ -46,22 +46,16 @@ def create_app(test_config=None):
   Create an endpoint to handle GET requests 
   for all available categories.
   '''
-  @app.route('/categories', methods=['GET'])
-  def get_all_categories():
-    categories = Category.query.all()
+  @app.route('/categories')
+  def retrieve_categories():
+    categories = Category.query.order_by(Category.type).all()
 
-    if not categories:
-      abort(405)
-
-    all_categories = [category.format() for category in categories]
-    # Initialize empty map to be filled & returned
-    categories_returned = {}
-    for cat in all_categories:
-      categories_returned[cat['id']] = cat['type']
+    if len(categories) == 0:
+      abort(404)
 
     return jsonify({
       'success': True,
-      'categories' : categories_returned
+      'categories': {category.id: category.type for category in categories}
     })
 
   '''
@@ -198,11 +192,21 @@ def create_app(test_config=None):
   Create a POST endpoint to get questions based on a search term. 
   It should return any questions for whom the search term 
   is a substring of the question. 
-
-  TEST: Search by any phrase. The questions list will update to include 
-  only question that include that string within their question. 
-  Try using the word "title" to start. 
   '''
+  @app.route('/questions/search', methods=['POST'])
+  def search_questions():
+    body = request.get_json()
+    search_term = body.get('searchTerm', None)
+
+    if search_term:
+      search_results = Question.query.filter(Question.question.ilike(f'%{search_term}%')).all()
+
+      return jsonify({
+        'success': True,
+        'questions': [question.format() for question in search_results],
+        'total_questions': len(search_results),
+        'current_category': None})
+    abort(404)
 
   '''
   @TODO: 
@@ -214,7 +218,7 @@ def create_app(test_config=None):
   '''
   @app.route('/categories/<int:category_id>/questions', methods=['GET'])
   def get_questions_from_categories(category_id):
-    # Query for all Questions that match category id
+    # Query with category id for every question
     if category_id!=0:
       selection = (Question.query
       .filter(Question.category == category_id)
@@ -223,15 +227,15 @@ def create_app(test_config=None):
     else:
       selection = (Question.query.order_by(Question.id).all())
 
+    # If no questions in the category
     if not selection:
-      # If selection is empty it means they are no question in this category
       abort(400)
 
-    # Paginate and format question into list of dicts
+    # Paginate
     questions_paginated = paginate_questions(request, selection)
 
+    # If paginated questions is empty it means the page selected does not contain any questions
     if not questions_paginated:
-      # If paginated questions is empty it means the page selected does not contain any questions
       abort(404, {'message': 'No questions in selected page.'})
 
     # Return succesfull response
