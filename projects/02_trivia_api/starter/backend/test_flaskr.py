@@ -112,7 +112,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertTrue((len(new_total_questions) - len(old_total_questions)) == 1)
+        self.assertTrue((new_total_questions - old_total_questions) == 1)
 
 
     def test_add_question_error_422(self):
