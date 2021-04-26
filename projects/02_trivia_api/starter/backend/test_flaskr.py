@@ -33,7 +33,7 @@ class TriviaTestCase(unittest.TestCase):
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
-    def test_endpoint_not_available(self):
+    def test_endpoint_not_available_404(self):
         # Test GET request for the endpoint
         res = self.client().get('/question')
         data = json.loads(res.data)
@@ -41,7 +41,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['error'], 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'resource not found, endpoint not available')
+        self.assertEqual(data['message'], 'resource not found')
 
 
     def test_get_categories_200(self):
