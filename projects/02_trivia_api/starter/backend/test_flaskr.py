@@ -115,7 +115,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue((len(new_total_questions) - len(old_total_questions)) == 1)
 
 
-    def test_add_question_error_400(self):
+    def test_add_question_error_422(self):
         # Test POST new question with difficulty input missing
         old_total_questions = len(Question.query.all())
 
@@ -130,7 +130,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data["success"], False)
-        self.assertEqual(data["message"], "unprocessable, missing difficulty input")
+        self.assertEqual(data["message"], "unprocessable")
         self.assertTrue(len(new_total_questions) == len(old_total_questions))
 
 
