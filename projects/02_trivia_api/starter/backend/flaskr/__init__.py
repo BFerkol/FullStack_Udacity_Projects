@@ -46,8 +46,7 @@ def create_app(test_config=None):
   def retrieve_categories():
     categories = Category.query.order_by(Category.type).all()
 
-    if len(categories) == 0:
-      abort(404)
+    if len(categories) == 0: abort(404)
 
     return jsonify({
       'success': True,
@@ -68,8 +67,7 @@ def create_app(test_config=None):
 
     categories = Category.query.order_by(Category.type).all()
 
-    if len(current_questions) == 0:
-      abort(404)
+    if len(current_questions) == 0: abort(404)
 
     return jsonify({
       'success': True,
@@ -109,8 +107,8 @@ def create_app(test_config=None):
   def add_question():
     body = request.get_json()
 
-    if not ('question' in body and 'answer' in body and 'difficulty' in body and 'category' in body):
-      abort(422)
+    if not ('question' in body and 'answer' in body and
+            'difficulty' in body and 'category' in body): abort(422)
 
     try:
       question = Question(question=body.get('question'),
@@ -181,14 +179,12 @@ def create_app(test_config=None):
     try:
       body = request.get_json()
       
-      if not ('quiz_category' in body and 'previous_questions' in body):
-        abort(422)
+      if not ('quiz_category' in body and 'previous_questions' in body): abort(422)
         
       category = body.get('quiz_category')
       previous_questions = body.get('previous_questions')
       
-      if category['type'] == 'click':
-        available_questions = Question.query.filter(
+      if category['type'] == 'click': available_questions = Question.query.filter(
                   Question.id.notin_((previous_questions))).all()
       else:
          available_questions = Question.query.filter_by(

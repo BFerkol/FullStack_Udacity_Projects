@@ -71,7 +71,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 405)
         self.assertEqual(data['error'], 405)
-        self.assertEqual(data['message'], "method not allowed, wrong method")
+        self.assertEqual(data['message'], "method not allowed")
         self.assertEqual(data['success'], False)
 
 
@@ -88,12 +88,12 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_get_questions_past_valid_range_404(self):
         # Test GET request for questions out of range
-        res = self.client().get('/questions?page=1000')
+        res = self.client().get('/questions?page=1234')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'resource not found, out of range')
+        self.assertEqual(data['message'], 'resource not found')
 
 
     def test_add_question_200(self):
