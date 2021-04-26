@@ -136,21 +136,21 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_delete_question_200(self):
         # Test DELETE a question
-        question = Question(question='test question',
+        test_question = Question(question='test question',
                             answer='test answer',
                             difficulty=1, category=1) # default values set to 1
-        question.insert()
-        question_id = question.id
+        test_question.insert()
+        question_id = test_question.id
 
         res = self.client().delete(f'/questions/{question_id}')
         data = json.loads(res.data)
 
-        question = Question.query.filter(Question.id == question.id).one_or_none()
+        question = Question.query.filter(Question.id == test_question.id).one_or_none()
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(data['deleted'], str(question_id))
-        self.assertEqual(question, None)
+        self.assertEqual(test_question, None)
 
 
     def test_delete_non_existing_question_422(self):
@@ -210,9 +210,8 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_play_quiz_200(self):
         # Test POST to play a new quiz
-        new_quiz_round = {
-            'previous_questions': [],
-            'quiz_category': {'type': 'Entertainment', 'id': 5}}
+        new_quiz_round = {'previous_questions': [],
+                            'quiz_category': {'type': 'Entertainment', 'id': 5}}
 
         res = self.client().post('/quizzes', json=new_quiz_round)
         data = json.loads(res.data)
