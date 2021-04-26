@@ -98,7 +98,7 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_add_question_200(self):
         # Test POST request for adding a new question
-        old_total_questions = len(Question.query.all())
+        old_questions = Question.query.all()
 
         new_question = {
             'question': 'new question',
@@ -108,11 +108,12 @@ class TriviaTestCase(unittest.TestCase):
 
         res = self.client().post('/question', json=new_question)
         data = json.loads(res.data)
-        new_total_questions = len(Question.query.all())
+        new_questions = Question.query.all()
+        
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertTrue((new_total_questions - old_total_questions) == 1)
+        self.assertTrue((len(new_questions) - len(old_questions)) == 1)
 
 
     def test_add_question_error_422(self):
