@@ -49,8 +49,8 @@ def create_app(test_config=None):
 		if len(categories) < 1: abort(404)
 
 		return jsonify({
-			'success': True,
-		  	'categories': {category.id: category.type for category in categories}
+			'categories': {category.id: category.type for category in categories},
+			'success': True
 		})
 
 	'''
@@ -70,11 +70,11 @@ def create_app(test_config=None):
 		if len(curr_questions) < 1: abort(404)
 
 		return jsonify({
-			'success': True,
-			'questions': curr_questions,
-			'total_questions': total_questions,
 			'categories': {category.id: category.type for category in categories},
-			'current_category': None
+			'questions': curr_questions,
+			'current_category': None,
+			'success': True,
+			'total_questions': total_questions
 			})
 
 	'''
@@ -90,7 +90,8 @@ def create_app(test_config=None):
 			question.delete()
 
 			return jsonify({
-				'success' : True
+				'deleted': question_id,
+				'success' : True				
 				})
 
 		except:
@@ -116,6 +117,7 @@ def create_app(test_config=None):
 		        	category=body.get('category')).insert()
 
 			return jsonify({
+				'created': question.id,
 				'success': True
 				})
 
@@ -137,10 +139,10 @@ def create_app(test_config=None):
 			total_questions = len(search_results)
 
 		return jsonify({
-			'success': True,
+			'current_category': None,
 			'questions': [question.format() for question in search_results],
-			'total_questions': total_questions,
-			'current_category': None
+			'success': True,
+			'total_questions': total_questions
 			})
 
 		abort(404)
@@ -159,10 +161,10 @@ def create_app(test_config=None):
 			total_questions = len(category_questions)
 
 			return jsonify({
-				'success': True,
+				'current_category': category_id,
 				'questions': [question.format() for question in category_questions],
-				'total_questions': total_questions,
-				'current_category': category_id
+				'success': True,
+				'total_questions': total_questions
 				})
 
 		except:
@@ -194,6 +196,7 @@ def create_app(test_config=None):
 					0, len(available_questions))].format() if len(available_questions) > 0 else None
 
 			return jsonify({
+				'question': new_question,
 				'success': True
 				})
 
