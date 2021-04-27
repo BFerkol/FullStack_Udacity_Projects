@@ -102,11 +102,11 @@ class TriviaTestCase(unittest.TestCase):
 		new_question = {
 			'question': 'new question',
 			'answer' : 'new answer',
-			'difficulty': 1, # defaults are 1
+			'difficulty': 1,
 			'category': 1
 			}
 
-		res = self.client().post('/question', json=new_question)
+		res = self.client().post('/questions', json=new_question)
 		data = json.loads(res.data)
 		new_questions = Question.query.all()
         
@@ -118,7 +118,7 @@ class TriviaTestCase(unittest.TestCase):
 
 	def test_add_question_error_422(self):
 		# Test POST new question with difficulty input missing
-		old_total_questions = len(Question.query.all())
+		old_questions = Question.query.all()
 
 		new_question = {
 			'question': 'Test Question?',
@@ -127,30 +127,32 @@ class TriviaTestCase(unittest.TestCase):
 
 		res = self.client().post('/questions', json=new_question)
 		data = json.loads(res.data)
-		new_total_questions = len(Question.query.all())
+		new_questions = Question.query.all()
 
 		self.assertEqual(res.status_code, 422)
 		self.assertEqual(data["success"], False)
 		self.assertEqual(data["message"], "unprocessable")
-		self.assertTrue(len(new_total_questions) == len(old_total_questions))
+		self.assertTrue(len(new_questions) == len(old_questions))
 
 
 	def test_delete_question_200(self):
 		# Test DELETE a question
 		test_question = Question(question='test question',
 								answer='test answer',
-								difficulty=1, category=1) # default values set to 1
+								difficulty=1,
+								category=1
+								)
 		test_question.insert()
-		question_id = test_question.id
+		test_question_id = test_question.id
 
-		res = self.client().delete(f'/questions/{question_id}')
+		res = self.client().delete('/questions/{}'.format(test_question_id))
 		data = json.loads(res.data)
 
 		test_question = Question.query.filter(Question.id == test_question.id).one_or_none()
 
 		self.assertEqual(res.status_code, 200)
 		self.assertEqual(data['success'], True)
-		self.assertEqual(data['deleted'], str(question_id))
+		self.assertEqual(data['deleted'], test_question_id)
 		self.assertEqual(test_question, None)
 
 
@@ -161,7 +163,7 @@ class TriviaTestCase(unittest.TestCase):
 
 		self.assertEqual(res.status_code, 404)
 		self.assertEqual(data['success'], False)
-		self.assertEqual(data['message'], 'unprocessable')
+		self.assertEqual(data['message'], 'resource not found')
 
 
 	def test_search_question_200(self):
@@ -223,13 +225,13 @@ class TriviaTestCase(unittest.TestCase):
 		self.assertEqual(data['success'], True)
 
 
-	def test_play_quiz_404(self):
+	def test_play_quiz_422(self):
 		# Test POST to play a new quiz while missing data
 		new_quiz_round = {'previous_questions': []}
 		res = self.client().post('/quizzes', json=new_quiz_round)
 		data = json.loads(res.data)
 
-		self.assertEqual(res.status_code, 404)
+		self.assertEqual(res.status_code, 422)
 		self.assertEqual(data["success"], False)
 		self.assertEqual(data["message"], "unprocessable")
 
