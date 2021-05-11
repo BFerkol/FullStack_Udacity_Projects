@@ -115,10 +115,10 @@ def create_app(test_config=None):
 		body = request.get_json()
 
 		# If there is an input category missing, abort (not processable)
-		if (len(body.get('question'))==0 or
-			(len(body.get('answer')))==0 or
-			(len(body.get('difficulty')))==0 or
-			(len(body.get('category')))==0):
+		if ((body.get('question')) is None or
+			(body.get('answer')) is None or
+			(body.get('difficulty')) is None or
+			(body.get('category')) is None):
 				abort(422)
 
 		try:
@@ -148,15 +148,16 @@ def create_app(test_config=None):
 
 		# If the search term is valid, grab the questions that match the criteria
 		if search_term:
-			results = Question.query.filter(Question.question.ilike(f'%{search_term}%')).all()
+			results = Question.query.filter(Question.question.ilike('%{}%'.format(search_term))).all()
 			total_questions = len(results)
+			questions = paginate_questions(request, results)
 
 			# If the there are no questions that match the search criteria, abort (not found)
 			if total_questions == 0: abort(404)
 
 			return jsonify({
 				'current_category': None,
-				'questions': [question.format() for question in results],
+				'questions': questions,
 				'success': True,
 				'total_questions': total_questions
 				})
@@ -181,10 +182,11 @@ def create_app(test_config=None):
 		try:
 			category_questions = Question.query.filter(Question.category == str(category_id)).all()
 			total_questions = len(category_questions)
+			questions = paginate_questions(request, category_questions)
 
 			return jsonify({
 				'current_category': category_id,
-				'questions': [question.format() for question in category_questions],
+				'questions': questions,
 				'success': True,
 				'total_questions': total_questions
 				})
@@ -206,7 +208,7 @@ def create_app(test_config=None):
 			category = body.get('quiz_category')
 
 			# Check if quiz category and previous questions are both empty, abort (not processable)
-			if (category == None and previous_questions == None): abort(422)
+			if (category is None and previous_questions is None): abort(422)
 
 			category_id = int(category['id'])
 
