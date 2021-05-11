@@ -65,16 +65,16 @@ def create_app(test_config=None):
 	def retrieve_questions():
 		selection = Question.query.order_by(Question.id).all()
 		total_questions = len(selection)
-		curr_questions = paginate_questions(request, selection)
+		questions = paginate_questions(request, selection)
 
 		categories = Category.query.order_by(Category.type).all()
 
 		# If there are no questions, abort (not found)
-		if len(curr_questions) == 0: abort(404)
+		if len(questions) == 0: abort(404)
 
 		return jsonify({
 			'categories': {category.id: category.type for category in categories},
-			'questions': curr_questions,
+			'questions': questions,
 			'current_category': None,
 			'success': True,
 			'total_questions': total_questions
@@ -215,15 +215,15 @@ def create_app(test_config=None):
 			# Check to see if the user selected a category or "All"
 			# If user selected a category, filter by category, and filter out previously used questions
 			if category_id != 0:
-				questions = Question.query.filter_by(category=category['id']).filter(
+				all_questions = Question.query.filter_by(category=category['id']).filter(
 					Question.id.notin_((previous_questions))).all()
 			# If "All", then filter out previous questions from all categories without category filter
 			else:
-				questions = Question.query.filter(
+				all_questions = Question.query.filter(
 					Question.id.notin_((previous_questions))).all()
 
 			# End the game if there are no more questions remaining
-			if (len(questions) == 0):
+			if (len(all_questions) == 0):
 				return jsonify({
 					'success': True,
 					'message': "game over"
@@ -231,11 +231,11 @@ def create_app(test_config=None):
 
 			# Choose a random question from all the available questions
 			else:
-				quiz_question = random.choice(questions).format()
+				question = random.choice(questions).format()
 
 			return jsonify({
 				'success': True,
-				'question': quiz_question
+				'question': question
 				})
 
 		except:
