@@ -223,7 +223,7 @@ def create_app(test_config=None):
 					Question.id.notin_((previous_questions))).all()
 
 			# End the game if there are no more questions remaining
-			if (len(all_questions) == 0):
+			if (all_questions is None):
 				return jsonify({
 					'success': True,
 					'message': "game over"
