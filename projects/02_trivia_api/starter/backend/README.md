@@ -80,7 +80,7 @@ GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
 - Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs.
-- Example response:*
+- Example response:
 {
 '1' : "Science",
 '2' : "Art",
@@ -93,8 +93,8 @@ GET '/categories'
 ```
 GET '/questions?page=<page_id>'
 - Within all the currently available categories, fetches a dictionary of paginated questions
-- Request Arguments:* page:int (optional)
-- Example response:*  
+- Request Arguments: page (integer) (optional)
+- Example response:
   {
   "categories": {
     "1": "Science", 
