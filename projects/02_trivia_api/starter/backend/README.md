@@ -90,12 +90,12 @@ GET '/categories'
 '6' : "Sports"}
 
 ```
-
+```
 GET '/questions?page=<page_id>'
 - Within all the currently available categories, fetches a dictionary of paginated questions
 - Request Arguments:* page:int (optional)
 - Example response:*  
- ``` {
+  {
   "categories": {
     "1": "Science", 
     "2": "Art", 
