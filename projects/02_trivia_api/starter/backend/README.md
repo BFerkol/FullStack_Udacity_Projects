@@ -215,7 +215,7 @@ GET `/categories/<int:category_id>/questions`
 POST `/quizzes`
 - If a category is chosen, fetches a random, not yet asked question from a that category, if not, then a random question is selected from any category
 - Request body: {previous_questions: arr, quiz_category: {id:int, type:string}}
-- Returns: a single random question from the specified category, not previously asked
+- Returns: a single random question, not previously asked
 - Example response: 
 ```
 {
