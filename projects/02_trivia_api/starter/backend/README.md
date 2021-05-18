@@ -132,7 +132,7 @@ GET `/questions`
 
 DELETE `/questions/<question_id>`
 - Delete an existing question from the repository of available questions with a specified question ID number
-- Request arguments: question_id (int) 
+- Request arguments: question_id:int 
 - Returns: If successful, returns the id of the question deleted and confirmation that the delete worked
 - Example response: 
 ```
@@ -144,8 +144,8 @@ DELETE `/questions/<question_id>`
 
 POST `/questions`
 Add a new question to the repository of available questions
-- *Request body:* {question:string, answer:string, difficulty:int, category:string}
-- *Example response:* 
+- Request body: {question:string, answer:string, difficulty:int, category:string}
+- Example response:
 ```
 {
   "created": 10, 
