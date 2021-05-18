@@ -281,8 +281,8 @@ def create_app(test_config=None):
 			"message": "unprocessable"
 			}), 422
   
-	''' Not used '''
-	''' 500 Internal Server Error
+	
+	''' 500 Internal Server Error '''
 	@app.errorhandler(500)
   	def internal_server_error(error):
     	return jsonify({
@@ -290,7 +290,8 @@ def create_app(test_config=None):
       		"error": 500,
       		"message": "internal server error"
 			}), 500
-	'''
+	
+
 	def getErrorMessage(error, default_text):
 		try:
 			return error.description["message"]
