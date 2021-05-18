@@ -107,18 +107,18 @@ GET '/questions?page=<page_id>'
   "current_category": null, 
   "questions": [
     {
-      "answer": "Maya Angelou", 
-      "category": 4, 
-      "difficulty": 2, 
-      "id": 5, 
-      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+      "answer": "Leonardo DiCaprio", 
+      "category": 5, 
+      "difficulty": 1, 
+      "id": 1, 
+      "question": "What actor co-starred with Kate Winslet in the movie Titanic'?"
     },  
     {
-      "answer": "Escher", 
+      "answer": "Wrote letters backwards, and from right to left", 
       "category": 2, 
-      "difficulty": 1, 
-      "id": 16, 
-      "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+      "difficulty": 5, 
+      "id": 13, 
+      "question": "How did da Vinci write compared to a person writing left to right?"
     }
   ], 
   "success": true, 
