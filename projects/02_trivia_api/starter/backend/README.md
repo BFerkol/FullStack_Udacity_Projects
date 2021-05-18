@@ -94,7 +94,7 @@ GET '/categories'
 GET '/questions'
 - Within all the currently available categories, fetches a dictionary of paginated questions
 - Request Arguments: None
-- Returns: Returns  paginated questions, not filtered by category
+- Returns: Returns paginated questions, not filtered by category
 - Example response:
   {
   "categories": {
