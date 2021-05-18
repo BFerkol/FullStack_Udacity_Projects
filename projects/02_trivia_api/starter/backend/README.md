@@ -79,7 +79,7 @@ DELETE ...
 GET `/categories`
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs.
+- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs
 - Example response:
 ```
 {
@@ -131,8 +131,9 @@ GET `/questions`
 ```
 
 DELETE `/questions/<question_id>`
-Delete an existing questions from the repository of available questions
+- Delete an existing question from the repository of available questions with a specified question ID number
 - Request arguments: question_id (int) 
+- Returns: If successful, returns the id of the question deleted and confirmation that the delete worked
 - Example response: 
 ```
 {
