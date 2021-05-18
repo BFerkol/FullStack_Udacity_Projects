@@ -132,8 +132,8 @@ GET `/questions`
 
 DELETE `/questions/<question_id>`
 Delete an existing questions from the repository of available questions
-- *Request arguments:* question_id:int 
-- *Example response:* 
+- Request arguments: question_id (int) 
+- Example response: 
 ```
 {
   "deleted": "28", 
