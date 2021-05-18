@@ -144,7 +144,7 @@ DELETE `/questions/<question_id>`
 
 POST `/questions`
 - Add a new question to the repository of available questions
-- Request body: {question:<string>, answer:<string>, difficulty:<int>, category:<string>}
+- Request body: {question:string, answer:string, difficulty:int, category:string}
 - Returns: If successful, returns the id of the question created and the confirmation that the POST worked
 - Example response:
 ```
