@@ -93,8 +93,8 @@ GET '/categories'
 ```
 GET '/questions'
 - Within all the currently available categories, fetches a dictionary of paginated questions
-- Request Arguments: page (integer) (optional)
-- Returns: If a page is specified, returns the corresponding page of paginated questions, not filtered by category; if a page isn't specified, returns the first 
+- Request Arguments: None
+- Returns: Returns  paginated questions, not filtered by category
 - Example response:
   {
   "categories": {
