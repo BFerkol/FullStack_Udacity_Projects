@@ -176,6 +176,42 @@ POST `/questions/search`
 }
 ```
 
+GET `/categories/<int:category_id>/questions`
+- Fetches a dictionary of questions for the specified category
+- Request argument: category_id:int
+- Returns all the questions in a specified category by id, in paginated form
+- Example response:
+```
+{
+  "current_category": 4, 
+  "questions": [
+    {
+      "answer": "Marcus Junius Brutus", 
+      "category": 4, 
+      "difficulty": 3, 
+      "id": 18, 
+      "question": "Who assassinated Julius Caesar?"
+    }, 
+    {
+      "answer": "Thomas Edison", 
+      "category": 4, 
+      "difficulty": 1, 
+      "id": 19, 
+      "question": "Who invented the light bulb?"
+    },
+    {
+      "answer": "1965", 
+      "category": 4, 
+      "difficulty": 5, 
+      "id": 21, 
+      "question": "What year did the American Civil War end?"
+    } 
+  ], 
+  "success": true, 
+  "total_questions": 3
+}
+```
+
 
 ## Testing
 To run the tests, run
