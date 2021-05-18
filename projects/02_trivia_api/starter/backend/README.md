@@ -154,6 +154,27 @@ POST `/questions`
 }
 ```
 
+POST `/questions/search`
+Fetches all questions where a substring matches the search term (not case-sensitive)
+- Request body: {searchTerm:string}
+- Example response:
+```
+{
+  "current_category": null, 
+  "questions": [
+    {
+      "answer": "48", 
+      "category": 3, 
+      "difficulty": 1, 
+      "id": 3, 
+      "question": "How many mainland states are there in the USA?"
+    }
+  ], 
+  "success": true, 
+  "total_questions": 1
+}
+```
+
 
 ## Testing
 To run the tests, run
