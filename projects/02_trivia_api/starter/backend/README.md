@@ -155,8 +155,9 @@ POST `/questions`
 ```
 
 POST `/questions/search`
-Fetches all questions where a substring matches the search term (not case-sensitive)
+- Fetches all questions where a substring matches the search term (not case-sensitive)
 - Request body: {searchTerm:string}
+- Returns: all the questions that include the search term, in paginated form, without filter by category
 - Example response:
 ```
 {
