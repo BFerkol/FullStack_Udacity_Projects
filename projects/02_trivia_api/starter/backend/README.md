@@ -67,7 +67,7 @@ One note before you delve into your tasks: for each endpoint you are expected to
 9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
 
 ENDPOINT DOCUMENTATION
-```
+
 This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
 
 Endpoints
@@ -76,11 +76,12 @@ GET ...
 POST ...
 DELETE ...
 
-GET '/categories'
+GET `/categories`
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
 - Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs.
 - Example response:
+```
 {
 '1' : "Science",
 '2' : "Art",
@@ -90,12 +91,14 @@ GET '/categories'
 '6' : "Sports"}
 
 ```
-```
-GET '/questions'
+
+
+GET `/questions`
 - Within all the currently available categories, fetches a dictionary of paginated questions
 - Request Arguments: None
 - Returns: Returns paginated questions, not filtered by category
 - Example response:
+```
   {
   "categories": {
     "1": "Science", 
@@ -124,6 +127,17 @@ GET '/questions'
   ], 
   "success": true, 
   "total_questions": 2
+}
+```
+
+DELETE `/questions/<question_id>`
+Delete an existing questions from the repository of available questions
+- *Request arguments:* question_id:int 
+- *Example response:* 
+```
+{
+  "deleted": "28", 
+  "success": true
 }
 ```
 
