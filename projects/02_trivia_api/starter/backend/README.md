@@ -93,7 +93,6 @@ GET `/categories`
 
 ```
 
-
 GET `/questions`
 - Within all the currently available categories, fetches a dictionary of paginated questions
 - Request Arguments: None
