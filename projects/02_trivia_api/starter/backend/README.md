@@ -79,14 +79,51 @@ DELETE ...
 GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
+- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs.
+- Example response:*
+``` {
+'1' : "Science",
 '2' : "Art",
 '3' : "Geography",
 '4' : "History",
 '5' : "Entertainment",
 '6' : "Sports"}
 
+```
+
+GET '/questions?page=<page_id>'
+- Within all the currently available categories, fetches a dictionary of paginated questions
+- Request Arguments:* page:int (optional)
+- Example response:*  
+ ``` {
+  "categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  }, 
+  "current_category": null, 
+  "questions": [
+    {
+      "answer": "Maya Angelou", 
+      "category": 4, 
+      "difficulty": 2, 
+      "id": 5, 
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    },  
+    {
+      "answer": "Escher", 
+      "category": 2, 
+      "difficulty": 1, 
+      "id": 16, 
+      "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+    }
+  ], 
+  "success": true, 
+  "total_questions": 2
+}
 ```
 
 

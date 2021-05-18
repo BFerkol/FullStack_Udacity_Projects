@@ -173,7 +173,7 @@ def create_app(test_config=None):
 	'''
 	@app.route('/categories/<int:category_id>/questions', methods=['GET'])
 	def retrieve_questions_by_category(category_id):
-		category = Category.query.get(id)
+		category = Category.query.get(category_id)
 
 		# If there isn't a category that matches the id, abort (not found)
 		if (category is None): abort(404)
