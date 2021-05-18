@@ -137,7 +137,7 @@ DELETE `/questions/<question_id>`
 - Example response: 
 ```
 {
-  "deleted": "28", 
+  "deleted": "9", 
   "success": true
 }
 ```
