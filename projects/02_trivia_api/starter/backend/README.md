@@ -177,9 +177,9 @@ POST `/questions/search`
 ```
 
 GET `/categories/<int:category_id>/questions`
-- Fetches a dictionary of questions for the specified category
+- If a category is specified, fetches a dictionary of questions for the specified category
 - Request argument: category_id:int
-- Returns all the questions in a specified category by id, in paginated form
+- Returns: a dictionary of questions for the specified category by id, in paginated form
 - Example response:
 ```
 {
@@ -209,6 +209,24 @@ GET `/categories/<int:category_id>/questions`
   ], 
   "success": true, 
   "total_questions": 3
+}
+```
+
+POST `/quizzes`
+- If a category is chosen, fetches a random, not yet asked question from a that category, if not, then a random question is selected from any category
+- Request body: {previous_questions: arr, quiz_category: {id:int, type:string}}
+- Returns: a single random question from the specified category, not previously asked
+- Example response: 
+```
+{
+  "question": {
+    "answer": "The Skin", 
+    "category": 1, 
+    "difficulty": 2, 
+    "id": 23, 
+    "question": "What is the largest organ by surface area in the human body?"
+  }, 
+  "success": true
 }
 ```
 
