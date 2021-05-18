@@ -240,42 +240,6 @@ def create_app(test_config=None):
 
 		except:
 			abort(422)
-			
-	'''
-		try:
-			body = request.get_json()
-            previous_questions_ids = body.get('previous_questions', [])
-			
-            quiz_category = body.get('quiz_category')
-
-            category_id = int(quiz_category['id'])
-
-            all_questions = Question.query.order_by(Question.id).filter(
-                Question.category_id == category_id).all()
-
-            if len(previous_questions_ids) >= len(all_questions):
-                all_questions = Question.query.order_by(Question.id).all()
-
-            random_question = {}
-            while bool(random_question) is False:
-                for question in all_questions:
-                    if question.id not in previous_questions_ids:
-                        random_question = question.format()
-
-            data = {
-                'success': True,
-                'question': random_question,
-                'current_category': quiz_category['type']
-            }
-
-            # send data in json format
-            return jsonify(data)
-
-        except Exception:
-            abort(404)
-	'''
-
-
 
 	''' 
 	Create error handlers for all expected errors 
