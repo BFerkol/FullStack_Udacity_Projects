@@ -88,7 +88,8 @@ GET `/categories`
 '3' : "Geography",
 '4' : "History",
 '5' : "Entertainment",
-'6' : "Sports"}
+'6' : "Sports"
+}
 
 ```
 
