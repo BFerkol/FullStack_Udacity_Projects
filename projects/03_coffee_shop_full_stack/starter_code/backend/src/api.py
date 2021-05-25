@@ -100,9 +100,6 @@ def create_new_drink(jwt_token):
 
 # Error Handling
 
-@app.errorhandler(400)
-def 
-
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({
