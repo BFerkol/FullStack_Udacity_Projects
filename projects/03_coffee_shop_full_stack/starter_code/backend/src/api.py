@@ -21,13 +21,13 @@ def get_drinks():
     try:
         # Query all drinks
         drinks = Drink.query.all()
-        # Return JSON object (success -> true)
+        # Return JSON success object (success -> true)
         # and (for statement interating through list of all drinks using drink.short)
         return jsonify({
             'success': True,
             'drinks': [drink.short() for drink in drinks]
         })
-    # If fails, there is an internal error
+    # If fails, throw a 500 (internal error) error code
     except:
         abort(500)
 
@@ -38,29 +38,40 @@ def get_drinks_detail(jwt_token):
     try:
         # Query all drinks
         drinks = Drink.query.all()
-        # Return JSON object (success -> true)
+        # Return JSON success object (success -> true)
         # and (for statement iterating through list of all drinks using drink.long)
-        return jsonift({
+        return jsonify({
             'success': True,
             'drinks': [drink.long() for drink in drinks]
         })
-        # If fails, there is an internal error
+        # If fails, throw a 500 (internal error) error code
     except:
         abort(500)
 
 
-'''
-@TODO implement endpoint
-    POST /drinks
-        it should create a new row in the drinks table
-        it should require the 'post:drinks' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
-        or appropriate status code indicating reason for failure
-'''
 @app.route('/drinks', method=['POST'])
 @requires_auth('post:drinks')
-def 
+def create_new_drink(jwt_token):
+    data = request.get_json()
+
+    try:
+        # Insert a new drink with the title and recipe input from the JSON request
+        new_drink = Drink(title=data.get('title', None),
+                recipe=json.dumps(data.get('recipe', None))
+                )
+        new_drink.insert()
+        
+        # Return JSON success object (success -> true)
+        # and the new drink using drink.long representation
+        return jsonify({
+            'success': True,
+            'drinks': new_drink.long()
+        })
+
+    # If drink creation fails, throw a 422 (unprocessable) error code
+    except Exception:
+        abort(422)
+        
 
 '''
 @TODO implement endpoint
@@ -88,10 +99,6 @@ def
 
 
 # Error Handling
-'''
-Example error handling for unprocessable entity
-'''
-
 
 @app.errorhandler(422)
 def unprocessable(error):
@@ -100,6 +107,14 @@ def unprocessable(error):
         "error": 422,
         "message": "unprocessable"
     }), 422
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    return jsonify({
+        "success": False,
+        "error": 500,
+        "message": "unprocessable"
+    }), 500
 
 
 '''
