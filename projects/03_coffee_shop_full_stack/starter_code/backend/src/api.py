@@ -14,22 +14,17 @@ CORS(app)
 db_drop_and_create_all()
 
 # ROUTES
-'''
-@TODO implement endpoint
-    GET /drinks
-        it should be a public endpoint
-        it should contain only the drink.short() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
-        or appropriate status code indicating reason for failure
-'''
+
+
 @app.route('/drinks', method=['GET'])
 def get_drinks():
     try:
         # Query all drinks
         drinks = Drink.query.all()
-        # Return JSON object (success -> true) & (for statement interating through all drinks)
+        # Return JSON object (success -> true)
+        # and (for statement interating through list of all drinks' names)
         return jsonify({
-            'success': True
+            'success': True,
             'drinks': [drink.short() for drink in drinks]
         })
     # If fails, there is an internal error
@@ -37,17 +32,21 @@ def get_drinks():
         abort(500)
 
 
-'''
-@TODO implement endpoint
-    GET /drinks-detail
-        it should require the 'get:drinks-detail' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
-        or appropriate status code indicating reason for failure
-'''
 @app.route('/drinks-detail', method=['GET'])
 @requires_auth('get:drinks-detail')
 def get_drinks_detail():
+    try:
+        # Query all drinks
+        drinks = Drink.query.all()
+        # Return JSON object (success -> true)
+        # and (for statement iterating through list of all drinks' details)
+        return jsonift({
+            'success': True,
+            'drinks': [drink.long() for drink in drinks]
+        })
+        # If fails, there is an internal error
+    except:
+        abort(500)
 
 
 '''
@@ -59,6 +58,8 @@ def get_drinks_detail():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks', method=['POST'])
+@requires_auth('post:drinks')
 
 
 '''
