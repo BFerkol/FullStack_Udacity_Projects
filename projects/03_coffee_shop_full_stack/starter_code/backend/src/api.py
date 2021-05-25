@@ -100,6 +100,16 @@ def create_new_drink(jwt_token):
 
 # Error Handling
 
+@app.errorhandler(400)
+def 
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        "success": False,
+        "error": 404,
+        "message": "resource not found"
+    }), 404
 
 @app.errorhandler(422)
 def unprocessable(error):
