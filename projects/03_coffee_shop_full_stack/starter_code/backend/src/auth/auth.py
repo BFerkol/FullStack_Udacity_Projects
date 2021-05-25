@@ -98,7 +98,75 @@ def check_permissions(permission, payload):
     !!NOTE urlopen has a common certificate error described here: https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org
 '''
 def verify_decode_jwt(token):
-    raise Exception('Not Implemented')
+    # Get the public key from the URL/AUTH0
+    json_url = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
+    jwks = json.loads(jsonurl.read())
+
+    # Grab the JSON data from the header
+    unverified_header = json.get_unverified_header(token)
+
+    rsa_key = {}
+
+    # Check to see that the token has the key id field
+    if 'kid' not in unverified_header:
+        raise AuthError({
+            'code': 'invalid_header',
+            'description': 'Authorization malformed.'
+        }, 401)
+    
+    # Set the values in the rsa_key using keys' values
+    for key in jwks['keys']:
+        if key['kid'] == unverified_header['kid']:
+            rsa_key = {
+                'kty': key['kty'],
+                'kid': key['kid'],
+                'use': key['use'],
+                'n': key['n'],
+                'e': key['e']
+            }
+    
+    # Verify the key
+    if rsa_key:
+        # Validate the JWT using the key
+        try:
+            payload = jwt.decode(
+                token,
+                rsa_key,
+                algorithms=ALGORITHMS,
+                audience=API_AUDIENCE,
+                issuer='https://'+AUTH0_DOMAIN+'/'
+                )
+            # Return the payload if everything works
+            return payload
+
+        # Throw exception and raise AuthError if unable to parse the token
+        except Exception:
+            raise AuthError({
+                'code': 'invalid_header',
+                'description': 'Unable to parse authentication token.'
+            }, 400)
+        
+        # Throw exception and raise AuthError if the token has expired
+        except jwt.ExpiredSignatureError:
+            raise AuthError({
+                'code': 'token_expired',
+                'description': 'Token expired.'
+            }, 401)
+
+        # Throw exception and raise AuthError if the token has an invalid claim
+        except jwt.JWTClaimsError:
+            raise AuthError({
+                'code': 'invalid_claims',
+                'description': 'Incorrect claims. Please, check the audience and issuer.'
+            }, 401)
+        
+    # Raise AuthEror if unable to find the key
+    raise AuthError({
+        'code': 'invalid_header',
+        'description': 'Unable to find the appropriate key.'
+    }, 400)
+        
+        
 
 '''
 @TODO implement @requires_auth(permission) decorator method
