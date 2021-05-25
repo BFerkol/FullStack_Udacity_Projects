@@ -100,6 +100,7 @@ def create_new_drink(jwt_token):
 
 # Error Handling
 
+
 @app.errorhandler(422)
 def unprocessable(error):
     return jsonify({
