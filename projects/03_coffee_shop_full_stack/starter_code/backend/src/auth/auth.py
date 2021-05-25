@@ -147,6 +147,7 @@ def verify_decode_jwt(token):
         
 
 '''
+IS THIS ALREADY DONE AS IS???
 @TODO implement @requires_auth(permission) decorator method
     @INPUTS
         permission: string permission (i.e. 'post:drink')

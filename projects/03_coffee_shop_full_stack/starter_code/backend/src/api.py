@@ -11,13 +11,7 @@ app = Flask(__name__)
 setup_db(app)
 CORS(app)
 
-'''
-@TODO uncomment the following line to initialize the datbase
-!! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
-!! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
-!! Running this funciton will add one
-'''
-# db_drop_and_create_all()
+db_drop_and_create_all()
 
 # ROUTES
 '''
@@ -28,6 +22,19 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks', method=['GET'])
+def get_drinks():
+    try:
+        # Query all drinks
+        drinks = Drink.query.all()
+        # Return JSON object (success -> true) & (for statement interating through all drinks)
+        return jsonify({
+            'success': True
+            'drinks': [drink.short() for drink in drinks]
+        })
+    # If fails, there is an internal error
+    except:
+        abort(500)
 
 
 '''
@@ -38,6 +45,9 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks-detail', method=['GET'])
+@requires_auth('get:drinks-detail')
+def get_drinks_detail():
 
 
 '''
