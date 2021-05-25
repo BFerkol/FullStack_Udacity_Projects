@@ -51,7 +51,7 @@ def get_drinks_detail(jwt_token):
 
 @app.route('/drinks', method=['POST'])
 @requires_auth('post:drinks')
-def create_new_drink(jwt_token):
+def post_new_drink(jwt_token):
     data = request.get_json()
 
     try:
@@ -84,7 +84,9 @@ def create_new_drink(jwt_token):
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 '''
-
+@app.route('/drinks/<id>', method=['PATCH'])
+@requires_auth('patch:drinks')
+def patch_drink
 
 '''
 @TODO implement endpoint
