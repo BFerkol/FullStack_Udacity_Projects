@@ -51,13 +51,13 @@ def get_drinks_detail(jwt_token):
 
 @app.route('/drinks', method=['POST'])
 @requires_auth('post:drinks')
-def post_new_drink(jwt_token):
+def post_drink(jwt_token):
     data = request.get_json()
 
     try:
         # Insert a new drink with the title and recipe input from the JSON request
-        new_drink = Drink(title=data.get('title', None),
-                recipe=json.dumps(data.get('recipe', None))
+        new_drink = Drink(title=data.get('title'),
+                recipe=json.dumps(data.get('recipe'))
                 )
         new_drink.insert()
         
@@ -86,7 +86,39 @@ def post_new_drink(jwt_token):
 '''
 @app.route('/drinks/<id>', method=['PATCH'])
 @requires_auth('patch:drinks')
-def patch_drink
+def patch_drink(jwt_token, id):
+    data = request.get_json()
+
+    # If there is no title or recipe, throw abort 404 (not found) error code
+    if not data.get('title') and not data.get('recipe'):
+        abort(404)
+
+    try:
+        # Query the drink with the match id number
+        update_drink = Drink.query.filter_by(Drink.id=id).one_or_none()
+
+        # If the query returns nothing, throw abort 404 (not found) errow code
+        if not update_drink:
+            abort(404)
+
+        # Update the drink details and update to the database
+        update_drink.title = data.get('title')
+        update_drink.recipe = data.get('recipe')
+        update_drink.update()
+
+        return jsonify({
+            'success': True
+            'drinks': update_drink.long()
+        })
+
+    #  If drink update fails, throw a 422 (unprocessable) error code
+    except:
+        abort(422)
+
+
+
+
+        
 
 '''
 @TODO implement endpoint
@@ -98,6 +130,9 @@ def patch_drink
     returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks/<id>', method=['DELETE'])
+@requires_auth('delete:drinks')
+def delete_drink(jwt_token, id)
 
 
 # Error Handling
