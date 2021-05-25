@@ -22,7 +22,7 @@ def get_drinks():
         # Query all drinks
         drinks = Drink.query.all()
         # Return JSON object (success -> true)
-        # and (for statement interating through list of all drinks' names)
+        # and (for statement interating through list of all drinks using drink.short)
         return jsonify({
             'success': True,
             'drinks': [drink.short() for drink in drinks]
@@ -34,12 +34,12 @@ def get_drinks():
 
 @app.route('/drinks-detail', method=['GET'])
 @requires_auth('get:drinks-detail')
-def get_drinks_detail():
+def get_drinks_detail(jwt_token):
     try:
         # Query all drinks
         drinks = Drink.query.all()
         # Return JSON object (success -> true)
-        # and (for statement iterating through list of all drinks' details)
+        # and (for statement iterating through list of all drinks using drink.long)
         return jsonift({
             'success': True,
             'drinks': [drink.long() for drink in drinks]
@@ -60,7 +60,7 @@ def get_drinks_detail():
 '''
 @app.route('/drinks', method=['POST'])
 @requires_auth('post:drinks')
-
+def 
 
 '''
 @TODO implement endpoint
