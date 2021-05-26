@@ -10,6 +10,7 @@ from .auth.auth import AuthError, requires_auth
 def create_app(test_config=None):
     app = Flask(__name__)
     setup_db(app)
+    CORS(app)
     @app.errorhandler(422)
     def unprocessable(error):
         return jsonify({
@@ -18,8 +19,6 @@ def create_app(test_config=None):
             "message": "unprocessable"
             }), 422
     return app
-
-CORS(app)
 
 db_drop_and_create_all()
 
