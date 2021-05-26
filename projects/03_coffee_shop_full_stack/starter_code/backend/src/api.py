@@ -58,6 +58,10 @@ def get_drinks_detail(jwt_token):
 def post_drink(jwt_token):
     data = request.get_json()
 
+    # If there is no title or recipe, throw abort 404 (not found) error code
+    if not data.get('title') or not data.get('recipe'):
+        abort(404)
+
     try:
         # Insert a new drink with the title and recipe input from the JSON request
         new_drink = Drink(title=data.get('title'),
@@ -77,17 +81,6 @@ def post_drink(jwt_token):
         abort(422)
         
 
-'''
-@TODO implement endpoint
-    PATCH /drinks/<id>
-        where <id> is the existing model id
-        it should respond with a 404 error if <id> is not found
-        it should update the corresponding row for <id>
-        it should require the 'patch:drinks' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
-        or appropriate status code indicating reason for failure
-'''
 @app.route('/drinks/<id>', method=['PATCH'])
 @requires_auth('patch:drinks')
 def patch_drink(jwt_token, id):
@@ -97,14 +90,14 @@ def patch_drink(jwt_token, id):
     if not data.get('title') and not data.get('recipe'):
         abort(404)
 
+    # Query the drink with the matching id number
+    update_drink = Drink.query.filter_by(Drink.id=id).one_or_none()
+
+    # If the query returns nothing, throw abort 404 (not found) errow code
+    if not update_drink:
+        abort(404)
+
     try:
-        # Query the drink with the matching id number
-        update_drink = Drink.query.filter_by(Drink.id=id).one_or_none()
-
-        # If the query returns nothing, throw abort 404 (not found) errow code
-        if not update_drink:
-            abort(404)
-
         # Update the drink details
         update_drink.title = data.get('title')
         update_drink.recipe = data.get('recipe')
@@ -122,16 +115,6 @@ def patch_drink(jwt_token, id):
         abort(422)
 
 
-'''
-@TODO implement endpoint
-    DELETE /drinks/<id>
-        where <id> is the existing model id
-        it should respond with a 404 error if <id> is not found
-        it should delete the corresponding row for <id>
-        it should require the 'delete:drinks' permission
-    returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
-        or appropriate status code indicating reason for failure
-'''
 @app.route('/drinks/<id>', method=['DELETE'])
 @requires_auth('delete:drinks')
 def delete_drink(jwt_token, id):
