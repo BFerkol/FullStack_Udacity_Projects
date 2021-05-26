@@ -7,24 +7,15 @@ from flask_cors import CORS
 from .database.models import db_drop_and_create_all, setup_db, Drink
 from .auth.auth import AuthError, requires_auth
 
-def create_app(test_config=None):
-    app = Flask(__name__)
-    setup_db(app)
-    CORS(app)
-    @app.errorhandler(422)
-    def unprocessable(error):
-        return jsonify({
-            "success": False,
-            "error": 422,
-            "message": "unprocessable"
-            }), 422
-    return app
+app = Flask(__name__)
+setup_db(app)
+CORS(app)
 
-db_drop_and_create_all()
+# db_drop_and_create_all()
 
 # ROUTES
 
-@app.route('/drinks', method=['GET'])
+@app.route('/drinks', methods=['GET'])
 def get_drinks():
     try:
         # Query all drinks
@@ -42,7 +33,7 @@ def get_drinks():
         abort(500)
 
 
-@app.route('/drinks-detail', method=['GET'])
+@app.route('/drinks-detail', methods=['GET'])
 @requires_auth('get:drinks-detail')
 def get_drinks_detail(jwt_token):
     try:
@@ -61,14 +52,14 @@ def get_drinks_detail(jwt_token):
         abort(500)
 
 
-@app.route('/drinks', method=['POST'])
+@app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
 def post_drink(jwt_token):
     data = request.get_json()
 
-    # If there is no title or recipe, throw abort 404 (not found) error code
+    # If there is no title or recipe, throw abort 422 (unprocessable) error code
     if not data.get('title') or not data.get('recipe'):
-        abort(404)
+        abort(422)
 
     try:
         # Insert a new drink with the title and recipe input from the JSON request
@@ -89,14 +80,14 @@ def post_drink(jwt_token):
         abort(422)
         
 
-@app.route('/drinks/<id>', method=['PATCH'])
+@app.route('/drinks/<id>', methods=['PATCH'])
 @requires_auth('patch:drinks')
 def patch_drink(jwt_token, id):
     data = request.get_json()
 
-    # If there is no title or recipe, throw abort 404 (not found) error code
+    # If there is no title or recipe, throw abort 422 (unprocessable) error code
     if not data.get('title') and not data.get('recipe'):
-        abort(404)
+        abort(422)
 
     # Query the drink with the matching id number
     update_drink = Drink.query.get(id)
@@ -123,7 +114,7 @@ def patch_drink(jwt_token, id):
         abort(422)
 
 
-@app.route('/drinks/<id>', method=['DELETE'])
+@app.route('/drinks/<id>', methods=['DELETE'])
 @requires_auth('delete:drinks')
 def delete_drink(jwt_token, id):
     try:
