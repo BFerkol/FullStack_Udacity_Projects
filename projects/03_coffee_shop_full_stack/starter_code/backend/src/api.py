@@ -7,14 +7,23 @@ from flask_cors import CORS
 from .database.models import db_drop_and_create_all, setup_db, Drink
 from .auth.auth import AuthError, requires_auth
 
-app = Flask(__name__)
-setup_db(app)
+def create_app(test_config=None):
+    app = Flask(__name__)
+    setup_db(app)
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify({
+            "success": False,
+            "error": 422,
+            "message": "unprocessable"
+            }), 422
+    return app
+
 CORS(app)
 
 db_drop_and_create_all()
 
 # ROUTES
-
 
 @app.route('/drinks', method=['GET'])
 def get_drinks():
@@ -91,7 +100,7 @@ def patch_drink(jwt_token, id):
         abort(404)
 
     # Query the drink with the matching id number
-    update_drink = Drink.query.filter_by(Drink.id=id).one_or_none()
+    update_drink = Drink.query.get(id)
 
     # If the query returns nothing, throw abort 404 (not found) errow code
     if not update_drink:
@@ -120,7 +129,7 @@ def patch_drink(jwt_token, id):
 def delete_drink(jwt_token, id):
     try:
         # Query the drink with the matching id number
-        remove_drink = Drink.query.filter_by(Drink.id=id).one_or_none()
+        remove_drink = Drink.query.get(id)
         
         # If the query returns nothing, throw abort 404 (not found) errow code
         if not remove_drink:
@@ -169,7 +178,7 @@ def internal_server_error(error):
 
 @app.errorhandler(AuthError)
 def handle_auth_error(exception):
-    return return jsonify({
+    return jsonify({
         "success": False,
         "error": 401,
         'message': exception.error

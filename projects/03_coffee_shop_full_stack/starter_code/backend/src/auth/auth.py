@@ -1,5 +1,5 @@
 import json
-from flask import request, _request_ctx_stack
+from flask import request, _request_ctx_stack, abort
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
@@ -22,44 +22,43 @@ class AuthError(Exception):
 
 ## Auth Header
 def get_token_auth_header():
-   raise Exception('Not Implemented')
-   # Get the auth token
-   auth = request.header.get('Authorization', None)
+    # Get the auth token
+    auth = request.header.get('Authorization', None)
 
-   if auth is None:
+    if auth is None:
         raise AuthError({
             'code': 'authorization_header_missing',
             'description': 'Authorization header is expected.'
     })
     
     # Split the authorization header into its different parts
-    header_sections = auth.split()
+    header_parts = auth.split()
 
     # Check token for 'bearer' keyword
     # Convert 'bearer' to all lowercase, if it doesn't match & is invalid header
-    if header_sections[0].lower() != 'bearer':
+    if header_parts[0].lower() != 'bearer':
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Authorization header must start with "bearer".'
     }, 401)
     # Check the token length
     # If only one part, then one part too short & is invalid
-    elif len(header_sections) == 1:
+    elif len(header_parts) == 1:
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Token not found.'
     }, 401)
     # If more than two parts, too many parts & is invalid header
-    elif len(header_sections) > 2:
+    elif len(header_parts) > 2:
         raise AuthError({
         'code': 'invalid_header',
         'description': 'Authorization header must be bearer token.'    
     }, 401)
 
     # Return the token part of the header
-    return header_sections[1]
+    return header_parts[1]
 
-
+    
 # Taken from coursework code
 def check_permissions(permission, payload):
     if 'permissions' not in payload:
@@ -75,6 +74,7 @@ def check_permissions(permission, payload):
     return True
 
 
+# Pretty much all of this code for this function taken from this Udacity course, Lesson 2.10
 def verify_decode_jwt(token):
     # Get the public key from the URL/AUTH0
     json_url = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')

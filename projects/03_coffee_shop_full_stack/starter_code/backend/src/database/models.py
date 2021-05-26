@@ -39,10 +39,7 @@ def db_drop_and_create_all():
         recipe='[{"name": "water", "color": "blue", "parts": 1}]'
     )
 
-
-drink.insert()
-# ROUTES
-
+#drink.insert()
 '''
 Drink
 a persistent drink entity, extends the base SQLAlchemy Model
